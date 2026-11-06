@@ -6,7 +6,7 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_supreme_ultimate_key_106"
+app.secret_key = "dragon_master_supreme_ultimate_key_107"
 
 GLOBAL_SEARCH_HISTORY = []
 
@@ -29,7 +29,7 @@ PANEL_TEMPLATE = """
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أداة التنين السيادية - الصوت النقي والسيادة المطلقة</title>
+    <title>أداة التنين السيادية - المؤثرات الصوتية النقية FX</title>
     <style>
         body { background-color: #010101; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
         .container { display: flex; justify-content: center; align-items: center; min-height: 98vh; }
@@ -48,26 +48,26 @@ PANEL_TEMPLATE = """
     </style>
 </head>
 <body>
-    <!-- ملف صوتي نقي وحقيقي للزئير والوحوش -->
-    <audio id="realDragonRoar" src="https://www.myinstants.com/media/sounds/monster-roar_2.mp3" preload="auto"></audio>
-    <audio id="cyberClick" src="https://www.myinstants.com/media/sounds/laser_1.mp3" preload="auto"></audio>
+    <!-- مؤثرات صوتية نقية FX للأزرار والتحكم -->
+    <audio id="fxClick" src="https://www.myinstants.com/media/sounds/button-16.mp3" preload="auto"></audio>
+    <audio id="fxRoar" src="https://www.myinstants.com/media/sounds/monster-roar_2.mp3" preload="auto"></audio>
 
     <div class="container">
         <div class="dragon-box">
-            <h1>🐉 محطة التنين السيادية المُشفرة (Ultimate Supreme Engine)</h1>
+            <h1>🐉 محطة التنين السيادية المُشفرة (Ultimate FX Engine)</h1>
             <p class="subtitle">فحص أمني، سحب وسائط، تشغيل الأكواد بحرية، وسجل بحث شامل للزوار</p>
             
             <div class="shield-status">
-                🔥 اضغط على الزر أدناه لسماع صوت التنين النقي والواضح تماماً، وبعدها ستعمل أصوات الأمن السيبراني للأزرار بكل سلاسة!
+                🎧 نظام المؤثرات الصوتية (FX) النقي مفعل تماماً! اضغط الزر أدناه لسماع صوت التنين، واستمتع بصوت الأزرار النقي مع كل تفاعل.
                 <br><br>
-                <button style="padding: 10px 22px; background: #ff4400; color: #fff; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer;" onclick="playCleanDragonRoar()">🔊 تشغيل صوت التنين الحقيقي والنقي</button>
+                <button style="padding: 10px 22px; background: #ff4400; color: #fff; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer;" onclick="playRoarFX()">🔊 تشغيل صوت التنين النقي</button>
             </div>
 
             <div class="panel">
                 <h3>🔍 محرك الفحص والذكاء الاستخباراتي:</h3>
-                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playClickSound()">
-                    <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص..." required onkeydown="playClickSound()">
-                    <select name="scan_type" onchange="playClickSound()">
+                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playClickFX()">
+                    <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص..." required onkeydown="playClickFX()">
+                    <select name="scan_type" onchange="playClickFX()">
                         <option value="all">فحص شامل (ذكاء استخباراتي كامل)</option>
                         <option value="ports">فحص المنافذ والشبكة (Port Scan)</option>
                         <option value="media">مستكشف الوسائط العميق (سحب الصور والفيديوهات)</option>
@@ -80,8 +80,8 @@ PANEL_TEMPLATE = """
                 <hr style="border: 1px dashed #333; margin: 15px 0;">
 
                 <h3>💻 مكتبة كتابة الأكواد وتنفيذ الأوامر (للزوار والمشغلين):</h3>
-                <form method="POST" action="/execute_code" style="text-align: center;" onsubmit="playClickSound()">
-                    <textarea name="custom_code" placeholder="اكتب أكوادك أو استعلاماتك هنا بحرية تامة... (مشفر وآمن)" required onkeydown="playClickSound()"></textarea>
+                <form method="POST" action="/execute_code" style="text-align: center;" onsubmit="playClickFX()">
+                    <textarea name="custom_code" placeholder="اكتب أكوادك أو استعلاماتك هنا بحرية تامة... (مشفر وآمن)" required onkeydown="playClickFX()"></textarea>
                     <br>
                     <button type="submit" style="background: #00ffcc; color: #000;">تنفيذ الكود في بيئة التنين ⚡</button>
                 </form>
@@ -104,18 +104,18 @@ PANEL_TEMPLATE = """
     </div>
     
     <script>
-        // تشغيل صوت التنين النقي والحقيقي بوضوح تام وبدون أي إزعاج
-        function playCleanDragonRoar() {
-            const roar = document.getElementById('realDragonRoar');
+        // دالة تشغيل صوت التنين النقي
+        function playRoarFX() {
+            const roar = document.getElementById('fxRoar');
             roar.currentTime = 0;
-            roar.play().catch(e => console.log("Audio play blocked by browser policy"));
+            roar.play().catch(e => console.log("Roar audio restricted"));
         }
 
-        // أصوات نقرات الأمن السيبراني الهادئة للأزرار
-        function playClickSound() {
-            const click = document.getElementById('cyberClick');
+        // دالة تشغيل صوت النقرة النقي (FX) للأزرار والكتابة
+        function playClickFX() {
+            const click = document.getElementById('fxClick');
             click.currentTime = 0;
-            click.play().catch(e => console.log("Click sound blocked"));
+            click.play().catch(e => console.log("Click audio restricted"));
         }
     </script>
 </body>
