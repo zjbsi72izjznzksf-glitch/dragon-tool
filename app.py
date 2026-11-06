@@ -6,7 +6,7 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_supreme_ultimate_key_103"
+app.secret_key = "dragon_master_supreme_ultimate_key_104"
 
 GLOBAL_SEARCH_HISTORY = []
 
@@ -29,9 +29,43 @@ PANEL_TEMPLATE = """
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أداة التنين السيادية - وحدة التحكم والأكواد المشفرة</title>
+    <title>أداة التنين السيادية - العرض السينمائي ونفث النيران</title>
     <style>
-        body { background-color: #020202; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
+        body { background-color: #020202; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; overflow-x: hidden; }
+        
+        /* شاشة مقدمة فيديو التنين المرعب ونفث النيران */
+        #intro-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease;
+        }
+        #intro-screen video {
+            width: 100%; max-width: 700px;
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(255, 68, 0, 0.6);
+            border: 2px solid #ff4400;
+        }
+        .skip-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #ff3333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255,0,0,0.5);
+        }
+        .skip-btn:hover { background: #cc0000; }
+
+        /* محتوى الأداة الأساسي */
         .container { display: flex; justify-content: center; align-items: center; min-height: 98vh; }
         .dragon-box { background: #070707; border: 3px solid #00ffcc; border-radius: 20px; padding: 20px; box-shadow: 0 0 40px rgba(0,255,204,0.3); max-width: 950px; width: 100%; }
         h1 { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-size: 20px; margin-bottom: 5px; }
@@ -45,23 +79,30 @@ PANEL_TEMPLATE = """
         button:hover { background: #cc0000; }
         .terminal-screen { background: #000; color: #00ff00; border: 1px solid #00ff00; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; text-align: left; direction: ltr; margin-top: 10px; max-height: 240px; overflow-y: auto; white-space: pre-wrap; }
         .shield-status { background: #001a1a; border: 1px dashed #00ffcc; padding: 8px; border-radius: 5px; font-size: 11px; color: #00ffcc; margin-bottom: 10px; text-align: right; }
-        .audio-bar { background: #1a0000; border: 1px solid #ff3333; padding: 8px; border-radius: 5px; margin-bottom: 10px; color: #ff9999; font-size: 12px; }
     </style>
 </head>
 <body>
+
+    <!-- شاشة عرض فيديو التنين ونفث النيران والزئير الحقيقي -->
+    <div id="intro-screen">
+        <h2 style="color: #ff4400; text-shadow: 0 0 15px #ff4400; margin-bottom: 15px;">🐉 محطة التنين السيادية - استعراض النيران والزئير الحقيقي</h2>
+        <video id="dragonVideo" autoplay muted playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-code-31910-large.mp4" type="video/mp4">
+            متصفحك لا يدعم عرض الفيديو.
+        </video>
+        <button class="skip-btn" onclick="startEngine()">دخول محطة التنين السيادية 🔥</button>
+    </div>
+
+    <!-- أصوات الأمن السيبراني للأزرار والكتابة -->
+    <audio id="cyberClick" src="https://www.myinstants.com/media/sounds/laser_1.mp3" preload="auto"></audio>
+
     <div class="container">
         <div class="dragon-box">
             <h1>🐉 محطة التنين السيادية المُشفرة (Ultimate Encrypted Engine)</h1>
             <p class="subtitle">فحص أمني، سحب وسائط، تشغيل الأكواد بحرية، وسجل بحث شامل للزوار</p>
             
-            <div class="audio-bar">
-                🔊 النظام الصوتي التفاعلي: المس الشاشة لمرة واحدة لسماع زئير التنين المرعب، وبعدها ستعمل أصوات الأمن السيبراني والأزرار تلقائياً!
-                <br><br>
-                <button style="padding: 6px 15px; background: #ffaa00; color: #000; font-size: 12px; font-weight: bold;" onclick="triggerDragonRoar()">🔥 اضغط هنا لسماع زئير التنين يدوياً</button>
-            </div>
-
             <div class="shield-status">
-                🛡️ درع التنين المشفر: نشط ومحمي ضد التسريبات | الكود المصدري محصن بالكامل.
+                🛡️ درع التنين المشفر: نشط ومحمي ضد التسريبات | النظام الصوتي السيبراني مفعل.
             </div>
 
             <div class="panel">
@@ -106,32 +147,31 @@ PANEL_TEMPLATE = """
     
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let roarDone = false;
 
-        // صوت زئير التنين المرعب والواضح (يتم تشغيله مرة واحدة فقط)
-        function triggerDragonRoar() {
-            if (roarDone) return; // منع تكراره ليبقى ظاهراً لمرة واحدة فقط
+        // دالة بدء الأداة وإخفاء شاشة الفيديو مع إطلاق زئير التنين الحقيقي والعميق
+        function startEngine() {
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
 
+            // تشغيل زئير تنين حقيقي ثقيل ومرعب برمجياً
             let osc1 = audioCtx.createOscillator();
             let gain1 = audioCtx.createGain();
             osc1.type = 'sawtooth';
-            osc1.frequency.setValueAtTime(110, audioCtx.currentTime);
-            osc1.frequency.linearRampToValueAtTime(35, audioCtx.currentTime + 2.2);
+            osc1.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc1.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 2.5);
 
             let osc2 = audioCtx.createOscillator();
             let gain2 = audioCtx.createGain();
-            osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(140, audioCtx.currentTime);
-            osc2.frequency.linearRampToValueAtTime(45, audioCtx.currentTime + 2.2);
+            osc2.type = 'square';
+            osc2.frequency.setValueAtTime(130, audioCtx.currentTime);
+            osc2.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 2.5);
 
-            gain1.gain.setValueAtTime(0.8, audioCtx.currentTime);
-            gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.2);
+            gain1.gain.setValueAtTime(0.9, audioCtx.currentTime);
+            gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5);
 
             gain2.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.2);
+            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.5);
 
             osc1.connect(gain1);
             gain1.connect(audioCtx.destination);
@@ -142,41 +182,37 @@ PANEL_TEMPLATE = """
             osc1.start();
             osc2.start();
 
-            osc1.stop(audioCtx.currentTime + 2.2);
-            osc2.stop(audioCtx.currentTime + 2.2);
+            osc1.stop(audioCtx.currentTime + 2.5);
+            osc2.stop(audioCtx.currentTime + 2.5);
 
-            roarDone = true;
+            // إخفاء شاشة التنين والانتقال للأداة بسلاسة
+            const intro = document.getElementById('intro-screen');
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+            }, 1000);
         }
 
-        // أصوات الأمن السيبراني والأزرار (تعمل مع كل كتابة أو نقرة بعد زئير التنين)
+        // أصوات الأمن السيبراني للأزرار
         function playCyberClick() {
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
             let osc = audioCtx.createOscillator();
             let gain = audioCtx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(750, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.08);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.1);
             
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
             
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.08);
+            osc.stop(audioCtx.currentTime + 0.1);
         }
-
-        // أول لمسة بالشاشة تطلق زئير التنين لمرة واحدة وبعدها تتحول لأصوات الأزرار
-        window.addEventListener('pointerdown', () => {
-            if (!roarDone) {
-                triggerDragonRoar();
-            } else {
-                playCyberClick();
-            }
-        });
     </script>
 </body>
 </html>
