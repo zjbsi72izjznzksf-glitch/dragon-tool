@@ -6,9 +6,8 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_supreme_ultimate_key_999"
+app.secret_key = "dragon_master_supreme_ultimate_key_101"
 
-# سجل أبحاث العمليات والأكواد الخاصة بالزوار (سجل كامل وآمن)
 GLOBAL_SEARCH_HISTORY = []
 
 def defensive_shield_check(req):
@@ -50,30 +49,24 @@ PANEL_TEMPLATE = """
     </style>
 </head>
 <body>
-    <!-- مشغل الأصوات السيبرانية وتنين النظام -->
-    <audio id="dragonRoar" src="https://www.myinstants.com/media/sounds/monster-roar.mp3" preload="auto"></audio>
-    <audio id="cyberClick" src="https://www.myinstants.com/media/sounds/laser_1.mp3" preload="auto"></audio>
-
     <div class="container">
         <div class="dragon-box">
             <h1>🐉 محطة التنين السيادية المُشفرة (Ultimate Encrypted Engine)</h1>
             <p class="subtitle">فحص أمني، سحب وسائط، تشغيل الأكواد بحرية، وسجل بحث شامل للزوار</p>
             
             <div class="audio-bar">
-                🔊 تنبيه الصوتيّات: المتصفحات تمنع الصوت التلقائي، اضغط الزر أدناه لتفعيل زئير التنين والأصوات السيبرانية فوراً!
-                <br><br>
-                <button style="padding: 6px 15px; background: #ffaa00; color: #000; font-size: 12px;" onclick="activateAudio()">▶️ تفعيل المؤثرات الصوتية الآن</button>
+                🔊 نظام التنين الصوتي الذكي: زئير التنين والأصوات السيبرانية ستعمل تلقائياً فور أول لمسة للشاشة!
             </div>
 
             <div class="shield-status">
-                🛡️ درع التنين المشفر: نشط ومحمي ضد التسريبات | الكود المصדري محصن بالكامل.
+                🛡️ درع التنين المشفر: نشط ومحمي ضد التسريبات | الكود المصدري محصن بالكامل.
             </div>
 
             <div class="panel">
                 <h3>🔍 محرك الفحص والذكاء الاستخباراتي:</h3>
-                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playClickSound()">
+                <form method="POST" action="/scan" style="text-align: center;">
                     <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص..." required>
-                    <select name="scan_type" onchange="playClickSound()">
+                    <select name="scan_type">
                         <option value="all">فحص شامل (ذكاء استخباراتي كامل)</option>
                         <option value="ports">فحص المنافذ والشبكة (Port Scan)</option>
                         <option value="media">مستكشف الوسائط العميق (سحب الصور والفيديوهات)</option>
@@ -86,7 +79,7 @@ PANEL_TEMPLATE = """
                 <hr style="border: 1px dashed #333; margin: 15px 0;">
 
                 <h3>💻 مكتبة كتابة الأكواد وتنفيذ الأوامر (للزوار والمشغلين):</h3>
-                <form method="POST" action="/execute_code" style="text-align: center;" onsubmit="playClickSound()">
+                <form method="POST" action="/execute_code" style="text-align: center;">
                     <textarea name="custom_code" placeholder="اكتب أكوادك أو استعلاماتك هنا بحرية تامة... (مشفر وآمن)" required></textarea>
                     <br>
                     <button type="submit" style="background: #00ffcc; color: #000;">تنفيذ الكود في بيئة التنين ⚡</button>
@@ -110,21 +103,58 @@ PANEL_TEMPLATE = """
     </div>
     
     <script>
-        function activateAudio() {
-            const roar = document.getElementById('dragonRoar');
-            roar.currentTime = 0;
-            roar.play().then(() => {
-                alert("✅ تم تفعيل زئير التنين والأصوات السيبرانية بنجاح!");
-            }).catch(e => {
-                console.log("Audio play error:", e);
-            });
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let soundPlayed = false;
+
+        function playDragonRoar() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(90, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(25, audioCtx.currentTime + 1.8);
+            
+            gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.8);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.8);
         }
 
-        function playClickSound() {
-            const click = document.getElementById('cyberClick');
-            click.currentTime = 0;
-            click.play().catch(e => console.log("Click sound error"));
+        function playCyberClick() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.12);
+            
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
         }
+
+        // تفعيل الصوت تلقائياً بمجرد قيام الزائر بأول ضغطة أو لمسة في أي مكان بالصفحة
+        window.addEventListener('pointerdown', () => {
+            if (!soundPlayed) {
+                playDragonRoar();
+                soundPlayed = true;
+            } else {
+                playCyberClick();
+            }
+        });
     </script>
 </body>
 </html>
