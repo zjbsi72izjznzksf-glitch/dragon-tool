@@ -6,12 +6,12 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_supreme_ultimate_key_107"
+app.secret_key = "abukhalid_supreme_ultimate_key_108"
 
 GLOBAL_SEARCH_HISTORY = []
 
 def defensive_shield_check(req):
-    client_ip = req.remote_addr
+    client_ip = request.remote_addr
     path = req.path
     malicious_patterns = ["union select", "<script type='text/javascript'>alert", "../../", "exec("]
     for pattern in malicious_patterns:
@@ -22,19 +22,19 @@ def defensive_shield_check(req):
 @app.before_request
 def security_firewall():
     if not defensive_shield_check(request):
-        return "<h1>403 Forbidden - Dragon Shield Protected 🐉🛡️</h1>", 403
+        return "<h1>403 Forbidden - Abū Khālid Shield Protected 🛡️</h1>", 403
 
 PANEL_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أداة التنين السيادية - المؤثرات الصوتية النقية FX</title>
+    <title>Abū Khālid OSINT Engine - السيادة المطلقة</title>
     <style>
         body { background-color: #010101; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
         .container { display: flex; justify-content: center; align-items: center; min-height: 98vh; }
         .dragon-box { background: #060606; border: 3px solid #ff4400; border-radius: 20px; padding: 20px; box-shadow: 0 0 50px rgba(255,68,0,0.4); max-width: 950px; width: 100%; }
-        h1 { color: #ff4400; text-shadow: 0 0 15px #ff4400; font-size: 22px; margin-bottom: 5px; }
+        h1 { color: #ff4400; text-shadow: 0 0 15px #ff4400; font-size: 24px; margin-bottom: 5px; font-family: monospace; }
         .subtitle { color: #888; font-size: 12px; margin-bottom: 15px; }
         .panel { background: #111; border: 2px solid #222; padding: 15px; border-radius: 10px; text-align: right; direction: rtl; margin-top: 10px; }
         .panel h3 { color: #ffaa00; margin-top: 0; font-size: 14px; }
@@ -48,19 +48,15 @@ PANEL_TEMPLATE = """
     </style>
 </head>
 <body>
-    <!-- مؤثرات صوتية نقية FX للأزرار والتحكم -->
-    <audio id="fxClick" src="https://www.myinstants.com/media/sounds/button-16.mp3" preload="auto"></audio>
-    <audio id="fxRoar" src="https://www.myinstants.com/media/sounds/monster-roar_2.mp3" preload="auto"></audio>
-
     <div class="container">
         <div class="dragon-box">
-            <h1>🐉 محطة التنين السيادية المُشفرة (Ultimate FX Engine)</h1>
-            <p class="subtitle">فحص أمني، سحب وسائط، تشغيل الأكواد بحرية، وسجل بحث شامل للزوار</p>
+            <h1>🐉 𝓐𝓫ū 𝓚𝓱ā𝓵𝓲𝓭 OSINT Engine 👑</h1>
+            <p class="subtitle">محطة الاستخبارات السيادية والمشفرة - تصميم خاص للأسطورة أبو خالد</p>
             
             <div class="shield-status">
-                🎧 نظام المؤثرات الصوتية (FX) النقي مفعل تماماً! اضغط الزر أدناه لسماع صوت التنين، واستمتع بصوت الأزرار النقي مع كل تفاعل.
+                ⚡ النظام الصوتي السيبراني مفعل! اضغط في أي مكان بالشاشة لتفعيل أصوات التحكم والأزرار الفورية.
                 <br><br>
-                <button style="padding: 10px 22px; background: #ff4400; color: #fff; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer;" onclick="playRoarFX()">🔊 تشغيل صوت التنين النقي</button>
+                <button style="padding: 10px 22px; background: #ff4400; color: #fff; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer;" onclick="playAudioEngine()">🔊 تفعيل نظام الصوت الحقيقي الآن</button>
             </div>
 
             <div class="panel">
@@ -83,7 +79,7 @@ PANEL_TEMPLATE = """
                 <form method="POST" action="/execute_code" style="text-align: center;" onsubmit="playClickFX()">
                     <textarea name="custom_code" placeholder="اكتب أكوادك أو استعلاماتك هنا بحرية تامة... (مشفر وآمن)" required onkeydown="playClickFX()"></textarea>
                     <br>
-                    <button type="submit" style="background: #00ffcc; color: #000;">تنفيذ الكود في بيئة التنين ⚡</button>
+                    <button type="submit" style="background: #00ffcc; color: #000;">تنفيذ الكود في بيئة 𝓐𝓫ū 𝓚𝓱ā𝓵𝓲𝓭 ⚡</button>
                 </form>
 
                 {% if result %}
@@ -104,19 +100,43 @@ PANEL_TEMPLATE = """
     </div>
     
     <script>
-        // دالة تشغيل صوت التنين النقي
-        function playRoarFX() {
-            const roar = document.getElementById('fxRoar');
-            roar.currentTime = 0;
-            roar.play().catch(e => console.log("Roar audio restricted"));
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // نظام صوتي رقمي متطور ونقي للأزرار والتفاعل
+        function playClickFX() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
+            
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
         }
 
-        // دالة تشغيل صوت النقرة النقي (FX) للأزرار والكتابة
-        function playClickFX() {
-            const click = document.getElementById('fxClick');
-            click.currentTime = 0;
-            click.play().catch(e => console.log("Click audio restricted"));
+        function playAudioEngine() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            playClickFX();
+            alert("✅ تم تفعيل نظام أصوات 𝓐𝓫ū 𝓚𝓱ā𝓵𝓲𝓭 السيبرانية بنجاح!");
         }
+
+        // تفعيل الصوت تلقائياً مع أول لمسة للشاشة
+        window.addEventListener('pointerdown', () => {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        });
     </script>
 </body>
 </html>
@@ -134,7 +154,7 @@ def run_scan():
     target = request.form.get('target', '').strip()
     scan_type = request.form.get('scan_type', 'all')
     
-    log = f"[*] IP: {client_ip} | Target: {target} | Mode: {scan_type.upper()}\n"
+    log = f"[*] Operator IP: {client_ip} | Target: {target} | Mode: {scan_type.upper()}\n"
     
     try:
         if scan_type == 'ports':
@@ -187,7 +207,7 @@ def execute_code():
     client_ip = request.remote_addr
     custom_code = request.form.get('custom_code', '').strip()
     
-    output = f"[*] Encrypted Sandbox Execution by IP: {client_ip}\n"
+    output = f"[*] Abū Khālid Sandbox Execution by IP: {client_ip}\n"
     output += f"[*] Input Query/Code:\n{custom_code}\n"
     output += "[+] Status: Code received and processed in secure isolated sandbox environment.\n"
     output += "[+] Result: Execution validated securely without exposing server architecture.\n"
