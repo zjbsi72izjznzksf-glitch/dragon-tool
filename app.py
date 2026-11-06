@@ -6,7 +6,7 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_supreme_ultimate_key_105"
+app.secret_key = "dragon_master_supreme_ultimate_key_106"
 
 GLOBAL_SEARCH_HISTORY = []
 
@@ -29,7 +29,7 @@ PANEL_TEMPLATE = """
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أداة التنين السيادية - السيادة المطلقة</title>
+    <title>أداة التنين السيادية - الصوت النقي والسيادة المطلقة</title>
     <style>
         body { background-color: #010101; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
         .container { display: flex; justify-content: center; align-items: center; min-height: 98vh; }
@@ -48,22 +48,26 @@ PANEL_TEMPLATE = """
     </style>
 </head>
 <body>
+    <!-- ملف صوتي نقي وحقيقي للزئير والوحوش -->
+    <audio id="realDragonRoar" src="https://www.myinstants.com/media/sounds/monster-roar_2.mp3" preload="auto"></audio>
+    <audio id="cyberClick" src="https://www.myinstants.com/media/sounds/laser_1.mp3" preload="auto"></audio>
+
     <div class="container">
         <div class="dragon-box">
             <h1>🐉 محطة التنين السيادية المُشفرة (Ultimate Supreme Engine)</h1>
             <p class="subtitle">فحص أمني، سحب وسائط، تشغيل الأكواد بحرية، وسجل بحث شامل للزوار</p>
             
             <div class="shield-status">
-                🔥 انتبه: اضغط في أي مكان على الشاشة أو على زر زئير التنين أدناه لسماع "الزئير الحقيقي المرعب" وتفعيل أصوات الأمن السيبراني!
+                🔥 اضغط على الزر أدناه لسماع صوت التنين النقي والواضح تماماً، وبعدها ستعمل أصوات الأمن السيبراني للأزرار بكل سلاسة!
                 <br><br>
-                <button style="padding: 8px 20px; background: #ff4400; color: #fff; font-size: 13px; font-weight: bold; border-radius: 6px;" onclick="triggerTrueDragonRoar()">🔊 إطلاق زئير التنين الحقيقي الآن</button>
+                <button style="padding: 10px 22px; background: #ff4400; color: #fff; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer;" onclick="playCleanDragonRoar()">🔊 تشغيل صوت التنين الحقيقي والنقي</button>
             </div>
 
             <div class="panel">
                 <h3>🔍 محرك الفحص والذكاء الاستخباراتي:</h3>
-                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playCyberClick()">
-                    <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص..." required onkeydown="playCyberClick()">
-                    <select name="scan_type" onchange="playCyberClick()">
+                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playClickSound()">
+                    <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص..." required onkeydown="playClickSound()">
+                    <select name="scan_type" onchange="playClickSound()">
                         <option value="all">فحص شامل (ذكاء استخباراتي كامل)</option>
                         <option value="ports">فحص المنافذ والشبكة (Port Scan)</option>
                         <option value="media">مستكشف الوسائط العميق (سحب الصور والفيديوهات)</option>
@@ -76,8 +80,8 @@ PANEL_TEMPLATE = """
                 <hr style="border: 1px dashed #333; margin: 15px 0;">
 
                 <h3>💻 مكتبة كتابة الأكواد وتنفيذ الأوامر (للزوار والمشغلين):</h3>
-                <form method="POST" action="/execute_code" style="text-align: center;" onsubmit="playCyberClick()">
-                    <textarea name="custom_code" placeholder="اكتب أكوادك أو استعلاماتك هنا بحرية تامة... (مشفر وآمن)" required onkeydown="playCyberClick()"></textarea>
+                <form method="POST" action="/execute_code" style="text-align: center;" onsubmit="playClickSound()">
+                    <textarea name="custom_code" placeholder="اكتب أكوادك أو استعلاماتك هنا بحرية تامة... (مشفر وآمن)" required onkeydown="playClickSound()"></textarea>
                     <br>
                     <button type="submit" style="background: #00ffcc; color: #000;">تنفيذ الكود في بيئة التنين ⚡</button>
                 </form>
@@ -100,79 +104,19 @@ PANEL_TEMPLATE = """
     </div>
     
     <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let roarTriggered = false;
-
-        // زئير تنين حقيقي، عميق، ومرعب جداً (يعمل بوضوح وقوة عالية)
-        function triggerTrueDragonRoar() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            // مذبذب ثقيل للتردد المنخفض للوحش
-            let osc1 = audioCtx.createOscillator();
-            let gain1 = audioCtx.createGain();
-            osc1.type = 'sawtooth';
-            osc1.frequency.setValueAtTime(95, audioCtx.currentTime);
-            osc1.frequency.linearRampToValueAtTime(25, audioCtx.currentTime + 2.8);
-
-            // مذبذب حاد للوحش الصارخ
-            let osc2 = audioCtx.createOscillator();
-            let gain2 = audioCtx.createGain();
-            osc2.type = 'square';
-            osc2.frequency.setValueAtTime(130, audioCtx.currentTime);
-            osc2.frequency.linearRampToValueAtTime(35, audioCtx.currentTime + 2.8);
-
-            gain1.gain.setValueAtTime(1.0, audioCtx.currentTime);
-            gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.8);
-
-            gain2.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2.8);
-
-            osc1.connect(gain1);
-            gain1.connect(audioCtx.destination);
-
-            osc2.connect(gain2);
-            gain2.connect(audioCtx.destination);
-
-            osc1.start();
-            osc2.start();
-
-            osc1.stop(audioCtx.currentTime + 2.8);
-            osc2.stop(audioCtx.currentTime + 2.8);
-            
-            roarTriggered = true;
+        // تشغيل صوت التنين النقي والحقيقي بوضوح تام وبدون أي إزعاج
+        function playCleanDragonRoar() {
+            const roar = document.getElementById('realDragonRoar');
+            roar.currentTime = 0;
+            roar.play().catch(e => console.log("Audio play blocked by browser policy"));
         }
 
-        // أصوات الأمن السيبراني للأزرار والكتابة
-        function playCyberClick() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            let osc = audioCtx.createOscillator();
-            let gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(650, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.1);
-            
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
+        // أصوات نقرات الأمن السيبراني الهادئة للأزرار
+        function playClickSound() {
+            const click = document.getElementById('cyberClick');
+            click.currentTime = 0;
+            click.play().catch(e => console.log("Click sound blocked"));
         }
-
-        // إطلاق زئير التنين الحقيقي تلقائياً مع أول لمسة للشاشة، ثم التحول لأصوات الأزرار
-        window.addEventListener('pointerdown', () => {
-            if (!roarTriggered) {
-                triggerTrueDragonRoar();
-            } else {
-                playCyberClick();
-            }
-        });
     </script>
 </body>
 </html>
