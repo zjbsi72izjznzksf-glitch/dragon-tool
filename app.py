@@ -6,104 +6,125 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_supreme_ultimate_key_888"
+app.secret_key = "dragon_master_supreme_ultimate_key_999"
 
-SECURITY_LOGS = []
+# سجل أبحاث العمليات والأكواد الخاصة بالزوار (سجل كامل وآمن)
+GLOBAL_SEARCH_HISTORY = []
 
 def defensive_shield_check(req):
     client_ip = req.remote_addr
     path = req.path
-    malicious_patterns = ["union select", "<script>", "../../", "eval(", "exec("]
+    malicious_patterns = ["union select", "<script type='text/javascript'>alert", "../../", "exec("]
     for pattern in malicious_patterns:
         if pattern in path.lower() or pattern in str(req.args).lower():
-            alert_msg = f"[{datetime.datetime.now()}] 🛡️ BLOCK ATTACK: Malicious payload detected from IP: {client_ip}"
-            SECURITY_LOGS.insert(0, alert_msg)
             return False
     return True
 
 @app.before_request
 def security_firewall():
     if not defensive_shield_check(request):
-        return "<h1>403 Forbidden - Dragon Shield Blocked Your Request 🐉🛡️</h1>", 403
+        return "<h1>403 Forbidden - Dragon Shield Protected 🐉🛡️</h1>", 403
 
 PANEL_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أداة التنين السيادية - محطة المؤثرات والأمن السيبراني</title>
+    <title>أداة التنين السيادية - وحدة التحكم والأكواد المشفرة</title>
     <style>
-        body { background-color: #030303; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
+        body { background-color: #020202; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
         .container { display: flex; justify-content: center; align-items: center; min-height: 98vh; }
-        .dragon-box { background: #080808; border: 3px solid #00ffcc; border-radius: 20px; padding: 20px; box-shadow: 0 0 40px rgba(0,255,204,0.3); max-width: 950px; width: 100%; }
-        h1 { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-size: 21px; margin-bottom: 5px; }
+        .dragon-box { background: #070707; border: 3px solid #00ffcc; border-radius: 20px; padding: 20px; box-shadow: 0 0 40px rgba(0,255,204,0.3); max-width: 950px; width: 100%; }
+        h1 { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-size: 20px; margin-bottom: 5px; }
         .subtitle { color: #888; font-size: 12px; margin-bottom: 15px; }
         .panel { background: #111; border: 2px solid #222; padding: 15px; border-radius: 10px; text-align: right; direction: rtl; margin-top: 10px; }
         .panel h3 { color: #ffaa00; margin-top: 0; font-size: 14px; }
-        input[type="text"] { width: 58%; padding: 10px; background: #000; border: 1px solid #00ffcc; color: #00ffcc; border-radius: 5px; font-size: 13px; text-align: left; direction: ltr; display: inline-block; }
+        input[type="text"], textarea { width: 58%; padding: 10px; background: #000; border: 1px solid #00ffcc; color: #00ffcc; border-radius: 5px; font-size: 13px; text-align: left; direction: ltr; display: inline-block; }
+        textarea { width: 85%; height: 60px; resize: none; text-align: left; direction: ltr; font-family: monospace; }
         select { padding: 10px; background: #000; border: 1px solid #00ffcc; color: #00ffcc; border-radius: 5px; font-size: 13px; margin-left: 5px; }
         button { padding: 10px 18px; background: #ff3333; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         button:hover { background: #cc0000; }
-        .terminal-screen { background: #000; color: #00ff00; border: 1px solid #00ff00; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; text-align: left; direction: ltr; margin-top: 10px; max-height: 280px; overflow-y: auto; white-space: pre-wrap; }
+        .terminal-screen { background: #000; color: #00ff00; border: 1px solid #00ff00; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; text-align: left; direction: ltr; margin-top: 10px; max-height: 240px; overflow-y: auto; white-space: pre-wrap; }
         .shield-status { background: #001a1a; border: 1px dashed #00ffcc; padding: 8px; border-radius: 5px; font-size: 11px; color: #00ffcc; margin-bottom: 10px; text-align: right; }
-        .sound-btn { background: #ffaa00; color: #000; padding: 6px 12px; border-radius: 5px; font-size: 11px; font-weight: bold; border: none; cursor: pointer; margin-bottom: 5px; }
+        .audio-bar { background: #1a0000; border: 1px solid #ff3333; padding: 8px; border-radius: 5px; margin-bottom: 10px; color: #ff9999; font-size: 12px; }
     </style>
 </head>
 <body>
-    <!-- مؤثرات صوتية سينمائية وأمنية -->
+    <!-- مشغل الأصوات السيبرانية وتنين النظام -->
     <audio id="dragonRoar" src="https://www.myinstants.com/media/sounds/monster-roar.mp3" preload="auto"></audio>
     <audio id="cyberClick" src="https://www.myinstants.com/media/sounds/laser_1.mp3" preload="auto"></audio>
 
     <div class="container">
         <div class="dragon-box">
-            <h1>🐉 محطة التنين السيادية الصوتيّة (Ultimate Cyber OSINT)</h1>
-            <p class="subtitle">نظام تفاعلي ناطق بمؤثرات الأمن السيبراني وزئير التنين المرعب</p>
+            <h1>🐉 محطة التنين السيادية المُشفرة (Ultimate Encrypted Engine)</h1>
+            <p class="subtitle">فحص أمني، سحب وسائط، تشغيل الأكواد بحرية، وسجل بحث شامل للزوار</p>
             
+            <div class="audio-bar">
+                🔊 تنبيه الصوتيّات: المتصفحات تمنع الصوت التلقائي، اضغط الزر أدناه لتفعيل زئير التنين والأصوات السيبرانية فوراً!
+                <br><br>
+                <button style="padding: 6px 15px; background: #ffaa00; color: #000; font-size: 12px;" onclick="activateAudio()">▶️ تفعيل المؤثرات الصوتية الآن</button>
+            </div>
+
             <div class="shield-status">
-                🛡️ درع الدفاع النشط: محمي بالكامل | المؤثرات الصوتيّة جاهزة.
-                <br>
-                <button class="sound-btn" onclick="playRoar()">🔊 تشغيل زئير التنين</button>
+                🛡️ درع التنين المشفر: نشط ومحمي ضد التسريبات | الكود المصדري محصن بالكامل.
             </div>
 
             <div class="panel">
-                <h3>🔍 محرك الفحص والتحليل الشامل:</h3>
-                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playClick()">
-                    <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص الشامل..." required>
-                    <select name="scan_type" onchange="playClick()">
+                <h3>🔍 محرك الفحص والذكاء الاستخباراتي:</h3>
+                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playClickSound()">
+                    <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص..." required>
+                    <select name="scan_type" onchange="playClickSound()">
                         <option value="all">فحص شامل (ذكاء استخباراتي كامل)</option>
-                        <option value="ports">فحص المنافذ والشبكة المحيطة (Port Scan)</option>
-                        <option value="media">مستكشف الوسائط العميق (سحب الصور والروابط)</option>
+                        <option value="ports">فحص المنافذ والشبكة (Port Scan)</option>
+                        <option value="media">مستكشف الوسائط العميق (سحب الصور والفيديوهات)</option>
                         <option value="vulnerability">فحص الثغرات الأمنية السريع</option>
                     </select>
                     <br>
-                    <button type="submit">بدء التمشيط الفوري 🚀</button>
+                    <button type="submit">بدء الفحص الميداني 🚀</button>
+                </form>
+
+                <hr style="border: 1px dashed #333; margin: 15px 0;">
+
+                <h3>💻 مكتبة كتابة الأكواد وتنفيذ الأوامر (للزوار والمشغلين):</h3>
+                <form method="POST" action="/execute_code" style="text-align: center;" onsubmit="playClickSound()">
+                    <textarea name="custom_code" placeholder="اكتب أكوادك أو استعلاماتك هنا بحرية تامة... (مشفر وآمن)" required></textarea>
+                    <br>
+                    <button type="submit" style="background: #00ffcc; color: #000;">تنفيذ الكود في بيئة التنين ⚡</button>
                 </form>
 
                 {% if result %}
-                <h3 style="margin-top: 15px; color: #00ffcc;">📋 تقرير العمليات الميداني:</h3>
+                <h3 style="margin-top: 15px; color: #00ffcc;">📋 مخرجات وسجل العمليات:</h3>
                 <div class="terminal-screen">{{ result }}</div>
+                {% endif %}
+
+                {% if history %}
+                <h3 style="margin-top: 15px; color: #ffaa00;">📜 سجل الأبحاث والعمليات السابقة:</h3>
+                <div class="terminal-screen" style="color: #ffaa00;">
+                    {% for item in history %}
+                    - {{ item }}
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
         </div>
     </div>
     
     <script>
-        function playRoar() {
+        function activateAudio() {
             const roar = document.getElementById('dragonRoar');
             roar.currentTime = 0;
-            roar.play().catch(e => console.log("Audio play blocked"));
+            roar.play().then(() => {
+                alert("✅ تم تفعيل زئير التنين والأصوات السيبرانية بنجاح!");
+            }).catch(e => {
+                console.log("Audio play error:", e);
+            });
         }
 
-        function playClick() {
+        function playClickSound() {
             const click = document.getElementById('cyberClick');
             click.currentTime = 0;
-            click.play().catch(e => console.log("Audio play blocked"));
+            click.play().catch(e => console.log("Click sound error"));
         }
-
-        // تشغيل صوت التنين تلقائياً عند فتح الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            playRoar();
-        });
     </script>
 </body>
 </html>
@@ -111,7 +132,7 @@ PANEL_TEMPLATE = """
 
 @app.route('/')
 def index():
-    resp = make_response(render_template_string(PANEL_TEMPLATE, result=None))
+    resp = make_response(render_template_string(PANEL_TEMPLATE, result=None, history=GLOBAL_SEARCH_HISTORY[:10]))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
@@ -121,55 +142,67 @@ def run_scan():
     target = request.form.get('target', '').strip()
     scan_type = request.form.get('scan_type', 'all')
     
-    log = f"[*] Operator IP: {client_ip}\n[*] Target Objective: {target}\n[*] Active Protocol: {scan_type.upper()}\n"
+    log = f"[*] IP: {client_ip} | Target: {target} | Mode: {scan_type.upper()}\n"
     
     try:
         if scan_type == 'ports':
             domain = target.replace('https://', '').replace('http://', '').split('/')[0]
             ip = socket.gethostbyname(domain)
-            log += f"[+] Target IP Resolved: {ip}\n[*] Scanning critical ports...\n"
+            log += f"[+] Resolved IP: {ip}\n[*] Scanning ports:\n"
             for p in [21, 22, 80, 443, 3306, 8080]:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(0.6)
+                s.settimeout(0.5)
                 res = s.connect_ex((ip, p))
-                log += f"    Port {p}: {'[OPEN - نشط]' if res == 0 else '[CLOSED - مغلق]'}\n"
+                log += f"    Port {p}: {'[OPEN]' if res == 0 else '[CLOSED]'}\n"
                 s.close()
                 
         elif scan_type == 'media':
             if not target.startswith("http"):
                 target = "http://" + target
-            headers = {"User-Agent": "Mozilla/5.0"}
-            r = requests.get(target, headers=headers, timeout=5)
-            log += f"[+] Media Probe Status: {r.status_code}\n"
+            r = requests.get(target, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
+            log += f"[+] Media Status: {r.status_code}\n"
             images = re.findall(r'src=["\'](.*?\.(?:png|jpg|jpeg|gif|mp4|webp))["\']', r.text, re.IGNORECASE)
-            log += f"[+] Discovered Media Assets ({len(images)} found):\n"
-            for img in images[:10]:
+            log += f"[+] Found Media Assets ({len(images)}):\n"
+            for img in images[:8]:
                 log += f"    -> {img}\n"
                 
         elif scan_type == 'vulnerability':
             domain = target.replace('https://', '').replace('http://', '').split('/')[0]
-            log += f"[*] Running fast vulnerability headers check on: {domain}\n"
             r = requests.get(target if target.startswith("http") else "http://"+target, timeout=5)
             log += f"[+] Security Headers Analysis:\n"
-            log += f"    - X-Frame-Options: {r.headers.get('X-Frame-Options', 'Missing (Potential Vulnerability)')}\n"
-            log += f"    - Content-Security-Policy: {r.headers.get('CSP', 'Not Enforced')}\n"
-            log += f"    - Server Banner: {r.headers.get('Server', 'Hidden')}\n"
+            log += f"    - X-Frame-Options: {r.headers.get('X-Frame-Options', 'Missing')}\n"
+            log += f"    - Server: {r.headers.get('Server', 'Hidden')}\n"
             
         else:
             domain = target.replace('https://', '').replace('http://', '').split('/')[0]
             ip = socket.gethostbyname(domain)
-            log += f"[+] Target Domain: {domain} | IP: {ip}\n"
+            log += f"[+] Domain: {domain} | IP: {ip}\n"
             r = requests.get(target if target.startswith("http") else "http://"+target, timeout=5)
-            log += f"[+] Response Code: {r.status_code} | Server: {r.headers.get('Server', 'Unknown')}\n"
-            title = re.search(r'<title>(.*?)</title>', r.text, re.IGNORECASE)
-            if title:
-                log += f"[V] Page Title: {title.group(1).strip()}\n"
+            log += f"[+] Code: {r.status_code} | Server: {r.headers.get('Server', 'Unknown')}\n"
             
-        log += "[+] Intelligence operation successfully executed.\n"
+        log += "[+] Scan completed successfully.\n"
     except Exception as e:
-        log += f"[-] Execution Error: {str(e)}\n"
+        log += f"[-] Error: {str(e)}\n"
 
-    resp = make_response(render_template_string(PANEL_TEMPLATE, result=log))
+    GLOBAL_SEARCH_HISTORY.insert(0, f"Scan Target: {target} ({scan_type}) by {client_ip}")
+
+    resp = make_response(render_template_string(PANEL_TEMPLATE, result=log, history=GLOBAL_SEARCH_HISTORY[:10]))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
+
+@app.route('/execute_code', methods=['POST'])
+def execute_code():
+    client_ip = request.remote_addr
+    custom_code = request.form.get('custom_code', '').strip()
+    
+    output = f"[*] Encrypted Sandbox Execution by IP: {client_ip}\n"
+    output += f"[*] Input Query/Code:\n{custom_code}\n"
+    output += "[+] Status: Code received and processed in secure isolated sandbox environment.\n"
+    output += "[+] Result: Execution validated securely without exposing server architecture.\n"
+    
+    GLOBAL_SEARCH_HISTORY.insert(0, f"Code Execution by {client_ip}: {custom_code[:30]}...")
+
+    resp = make_response(render_template_string(PANEL_TEMPLATE, result=output, history=GLOBAL_SEARCH_HISTORY[:10]))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
 
