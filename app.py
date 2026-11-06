@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, request, session, redirect, url_for, make_response
+from flask import Flask, render_template_string, request, make_response
 import datetime
 import socket
 import urllib.parse
@@ -6,17 +6,13 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_supreme_ultimate_key_777"
+app.secret_key = "dragon_master_supreme_ultimate_key_888"
 
-# نظام الجدار الدفاعي المتقدم لتسجيل وحماية السيرفر من الهجمات
 SECURITY_LOGS = []
 
 def defensive_shield_check(req):
     client_ip = req.remote_addr
-    user_agent = req.headers.get('User-Agent', '')
     path = req.path
-    
-    # فحص الأنماط الخبيثة والتصدّي لها فوراً
     malicious_patterns = ["union select", "<script>", "../../", "eval(", "exec("]
     for pattern in malicious_patterns:
         if pattern in path.lower() or pattern in str(req.args).lower():
@@ -35,7 +31,7 @@ PANEL_TEMPLATE = """
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أداة التنين السيادية - محطة الاستخبارات والوسائط الشاملة</title>
+    <title>أداة التنين السيادية - محطة المؤثرات والأمن السيبراني</title>
     <style>
         body { background-color: #030303; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
         .container { display: flex; justify-content: center; align-items: center; min-height: 98vh; }
@@ -50,23 +46,30 @@ PANEL_TEMPLATE = """
         button:hover { background: #cc0000; }
         .terminal-screen { background: #000; color: #00ff00; border: 1px solid #00ff00; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; text-align: left; direction: ltr; margin-top: 10px; max-height: 280px; overflow-y: auto; white-space: pre-wrap; }
         .shield-status { background: #001a1a; border: 1px dashed #00ffcc; padding: 8px; border-radius: 5px; font-size: 11px; color: #00ffcc; margin-bottom: 10px; text-align: right; }
+        .sound-btn { background: #ffaa00; color: #000; padding: 6px 12px; border-radius: 5px; font-size: 11px; font-weight: bold; border: none; cursor: pointer; margin-bottom: 5px; }
     </style>
 </head>
 <body>
+    <!-- مؤثرات صوتية سينمائية وأمنية -->
+    <audio id="dragonRoar" src="https://www.myinstants.com/media/sounds/monster-roar.mp3" preload="auto"></audio>
+    <audio id="cyberClick" src="https://www.myinstants.com/media/sounds/laser_1.mp3" preload="auto"></audio>
+
     <div class="container">
         <div class="dragon-box">
-            <h1>🐉 محطة التنين السيادية الشاملة (Ultimate OSINT Engine)</h1>
-            <p class="subtitle">فحص أمني، استكشاف منافذ، سحب وسائط عميق، وجدار دفاعي نشط بكل ثانية</p>
+            <h1>🐉 محطة التنين السيادية الصوتيّة (Ultimate Cyber OSINT)</h1>
+            <p class="subtitle">نظام تفاعلي ناطق بمؤثرات الأمن السيبراني وزئير التنين المرعب</p>
             
             <div class="shield-status">
-                🛡️ درع التنين النفاذ: نشط ويتصدى للهجمات | السيرفر محمي بالكامل ضد التسريبات والثغرات.
+                🛡️ درع الدفاع النشط: محمي بالكامل | المؤثرات الصوتيّة جاهزة.
+                <br>
+                <button class="sound-btn" onclick="playRoar()">🔊 تشغيل زئير التنين</button>
             </div>
 
             <div class="panel">
                 <h3>🔍 محرك الفحص والتحليل الشامل:</h3>
-                <form method="POST" action="/scan" style="text-align: center;">
+                <form method="POST" action="/scan" style="text-align: center;" onsubmit="playClick()">
                     <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص الشامل..." required>
-                    <select name="scan_type">
+                    <select name="scan_type" onchange="playClick()">
                         <option value="all">فحص شامل (ذكاء استخباراتي كامل)</option>
                         <option value="ports">فحص المنافذ والشبكة المحيطة (Port Scan)</option>
                         <option value="media">مستكشف الوسائط العميق (سحب الصور والروابط)</option>
@@ -83,6 +86,25 @@ PANEL_TEMPLATE = """
             </div>
         </div>
     </div>
+    
+    <script>
+        function playRoar() {
+            const roar = document.getElementById('dragonRoar');
+            roar.currentTime = 0;
+            roar.play().catch(e => console.log("Audio play blocked"));
+        }
+
+        function playClick() {
+            const click = document.getElementById('cyberClick');
+            click.currentTime = 0;
+            click.play().catch(e => console.log("Audio play blocked"));
+        }
+
+        // تشغيل صوت التنين تلقائياً عند فتح الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            playRoar();
+        });
+    </script>
 </body>
 </html>
 """
@@ -110,7 +132,7 @@ def run_scan():
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.settimeout(0.6)
                 res = s.connect_ex((ip, p))
-                log += f"    Port {p}: {'[OPEN - نشط][span_0](start_span)[span_1](start_span)[span_2](start_span)'[span_0](end_span)[span_1](end_span)[span_2](end_span) if res == 0 else '[CLOSED - مغلق]'}\n"
+                log += f"    Port {p}: {'[OPEN - نشط]' if res == 0 else '[CLOSED - مغلق]'}\n"
                 s.close()
                 
         elif scan_type == 'media':
@@ -133,7 +155,7 @@ def run_scan():
             log += f"    - Content-Security-Policy: {r.headers.get('CSP', 'Not Enforced')}\n"
             log += f"    - Server Banner: {r.headers.get('Server', 'Hidden')}\n"
             
-        else: # Universal All-in-one
+        else:
             domain = target.replace('https://', '').replace('http://', '').split('/')[0]
             ip = socket.gethostbyname(domain)
             log += f"[+] Target Domain: {domain} | IP: {ip}\n"
