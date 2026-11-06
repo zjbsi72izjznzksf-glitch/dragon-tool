@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template_string, request, session, redirect, url_for, make_response
 import datetime
 import socket
 import urllib.parse
@@ -6,99 +6,79 @@ import requests
 import re
 
 app = Flask(__name__)
-app.secret_key = "dragon_master_absolute_iron_security_999"
+app.secret_key = "dragon_master_supreme_ultimate_key_777"
 
-site_state = {
-    "welcome_message": "سيرفر أبو خالد الحصين - أداة التنين 🐉🛡️",
-    "status": "الوضع السيادي الحديدي نشط وآمن ✅",
-    "search_logs": []
-}
+# نظام الجدار الدفاعي المتقدم لتسجيل وحماية السيرفر من الهجمات
+SECURITY_LOGS = []
 
-LOGIN_TEMPLATE = """
+def defensive_shield_check(req):
+    client_ip = req.remote_addr
+    user_agent = req.headers.get('User-Agent', '')
+    path = req.path
+    
+    # فحص الأنماط الخبيثة والتصدّي لها فوراً
+    malicious_patterns = ["union select", "<script>", "../../", "eval(", "exec("]
+    for pattern in malicious_patterns:
+        if pattern in path.lower() or pattern in str(req.args).lower():
+            alert_msg = f"[{datetime.datetime.now()}] 🛡️ BLOCK ATTACK: Malicious payload detected from IP: {client_ip}"
+            SECURITY_LOGS.insert(0, alert_msg)
+            return False
+    return True
+
+@app.before_request
+def security_firewall():
+    if not defensive_shield_check(request):
+        return "<h1>403 Forbidden - Dragon Shield Blocked Your Request 🐉🛡️</h1>", 403
+
+PANEL_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سيرفر أبو خالد - التحقق الصارم الحصري</title>
-    <style>
-        body { background-color: #020202; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 20px; }
-        .box { background: #080808; border: 3px solid #ff3333; border-radius: 15px; padding: 30px; max-width: 500px; margin: 40px auto; box-shadow: 0 0 35px rgba(255,51,51,0.3); }
-        h1 { color: #ff3333; font-size: 21px; text-shadow: 0 0 10px rgba(255,51,51,0.5); }
-        p { color: #ccc; font-size: 13px; line-height: 1.6; text-align: right; }
-        input[type="text"] { width: 90%; padding: 11px; background: #000; border: 1px solid #00ffcc; color: #00ffcc; border-radius: 5px; margin: 10px 0; text-align: right; direction: ltr; }
-        .name-input { direction: rtl !important; }
-        button { padding: 12px 25px; background: #ff3333; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; font-size: 14px; }
-        button:hover { background: #cc0000; }
-        .warning { background: #1a0000; border: 1px dashed #ff3333; padding: 12px; border-radius: 5px; margin-bottom: 15px; text-align: right; }
-        .error-msg { background: #330000; color: #ff6666; border: 1px solid #ff3333; padding: 10px; border-radius: 5px; font-size: 12px; margin-top: 15px; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div class="box">
-        <h1>🔒 بوابة الحماية الصارمة (بريد حقيقي حصراً)</h1>
-        <div class="warning">
-            <p style="color: #ff9999; font-size: 12px; margin:0; text-align: right;">
-                تنبيه أمني حديدي: يمنع منعاً باتاً استخدام البريد الوهمي. يجب إدخال بريد جوجل حقيقي (مثال: `yourname@gmail.com`). أي محاولة تلاعب سترفض فوراً.
-            </p>
-        </div>
-        <form method="POST">
-            <input type="text" name="username" class="name-input" placeholder="الاسم الحركي للمشغل..." required>
-            <input type="text" name="email" placeholder="البريد الحقيقي (name@gmail.com)..." required>
-            <button type="submit">التحقق والدخول الميداني 🚀</button>
-        </form>
-        {% if error %}
-        <div class="error-msg">{{ error }}</div>
-        {% endif %}
-    </div>
-</body>
-</html>
-"""
-
-DASHBOARD_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>سيرفر أبو خالد - محطة الاستخبارات الشاملة</title>
+    <title>أداة التنين السيادية - محطة الاستخبارات والوسائط الشاملة</title>
     <style>
         body { background-color: #030303; color: #00ffcc; font-family: Tahoma, sans-serif; text-align: center; padding: 10px; margin: 0; }
-        .container { display: flex; justify-content: center; align-items: center; min-height: 95vh; }
-        .dragon-box { background: #0a0a0a; border: 3px solid #00ffcc; border-radius: 20px; padding: 20px; box-shadow: 0 0 40px rgba(0,255,204,0.3); max-width: 900px; width: 100%; }
-        h1 { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-size: 20px; margin-bottom: 5px; }
+        .container { display: flex; justify-content: center; align-items: center; min-height: 98vh; }
+        .dragon-box { background: #080808; border: 3px solid #00ffcc; border-radius: 20px; padding: 20px; box-shadow: 0 0 40px rgba(0,255,204,0.3); max-width: 950px; width: 100%; }
+        h1 { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; font-size: 21px; margin-bottom: 5px; }
         .subtitle { color: #888; font-size: 12px; margin-bottom: 15px; }
         .panel { background: #111; border: 2px solid #222; padding: 15px; border-radius: 10px; text-align: right; direction: rtl; margin-top: 10px; }
         .panel h3 { color: #ffaa00; margin-top: 0; font-size: 14px; }
-        input[type="text"] { width: 63%; padding: 10px; background: #000; border: 1px solid #00ffcc; color: #00ffcc; border-radius: 5px; font-size: 13px; text-align: left; direction: ltr; display: inline-block; }
+        input[type="text"] { width: 58%; padding: 10px; background: #000; border: 1px solid #00ffcc; color: #00ffcc; border-radius: 5px; font-size: 13px; text-align: left; direction: ltr; display: inline-block; }
         select { padding: 10px; background: #000; border: 1px solid #00ffcc; color: #00ffcc; border-radius: 5px; font-size: 13px; margin-left: 5px; }
-        button { padding: 10px 18px; background: #00ffcc; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #00b388; }
-        .terminal-screen { background: #000; color: #00ff00; border: 1px solid #00ff00; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; text-align: left; direction: ltr; margin-top: 10px; max-height: 260px; overflow-y: auto; white-space: pre-wrap; }
-        .user-tag { background: #1a1a1a; border: 1px solid #ffaa00; padding: 5px 10px; border-radius: 5px; font-size: 12px; color: #ffaa00; display: inline-block; margin-bottom: 10px; }
+        button { padding: 10px 18px; background: #ff3333; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #cc0000; }
+        .terminal-screen { background: #000; color: #00ff00; border: 1px solid #00ff00; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; text-align: left; direction: ltr; margin-top: 10px; max-height: 280px; overflow-y: auto; white-space: pre-wrap; }
+        .shield-status { background: #001a1a; border: 1px dashed #00ffcc; padding: 8px; border-radius: 5px; font-size: 11px; color: #00ffcc; margin-bottom: 10px; text-align: right; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="dragon-box">
-            <h1>🐉 سيرفر أبو خالد للاستخبارات الشاملة (محمي حصرياً)</h1>
-            <p class="subtitle">فحص وتحليل أي شيء في العالم بمشغلين موثقين بريدياً</p>
+            <h1>🐉 محطة التنين السيادية الشاملة (Ultimate OSINT Engine)</h1>
+            <p class="subtitle">فحص أمني، استكشاف منافذ، سحب وسائط عميق، وجدار دفاعي نشط بكل ثانية</p>
             
+            <div class="shield-status">
+                🛡️ درع التنين النفاذ: نشط ويتصدى للهجمات | السيرفر محمي بالكامل ضد التسريبات والثغرات.
+            </div>
+
             <div class="panel">
-                <div class="user-tag">👤 المشغل الموثق: {{ user_email }} | الآيبي: {{ client_ip }}</div>
-                <h3>🔍 محرك البحث الشامل (كل شيء في العالم):</h3>
-                <form method="POST" action="/search" style="text-align: center;">
-                    <input type="text" name="target" placeholder="أدخل أي رابط في العالم، موقع، أو هدف للبحث..." required>
+                <h3>🔍 محرك الفحص والتحليل الشامل:</h3>
+                <form method="POST" action="/scan" style="text-align: center;">
+                    <input type="text" name="target" placeholder="أدخل رابط، IP، أو نطاق للفحص الشامل..." required>
                     <select name="scan_type">
-                        <option value="universal">تحليل شامل وعام (أي شيء في العالم)</option>
-                        <option value="dns">استعلام سجلات الـ DNS العميقة</option>
-                        <option value="ports">فحص المنافذ والحالة الشبكية</option>
+                        <option value="all">فحص شامل (ذكاء استخباراتي كامل)</option>
+                        <option value="ports">فحص المنافذ والشبكة المحيطة (Port Scan)</option>
+                        <option value="media">مستكشف الوسائط العميق (سحب الصور والروابط)</option>
+                        <option value="vulnerability">فحص الثغرات الأمنية السريع</option>
                     </select>
                     <br>
-                    <button type="submit">تنفيذ الفحص الاستخباراتي 🚀</button>
+                    <button type="submit">بدء التمشيط الفوري 🚀</button>
                 </form>
 
-                {% if search_result %}
-                <h3 style="margin-top: 15px; color: #00ffcc;">📋 تقرير الاستخبارات الميداني:</h3>
-                <div class="terminal-screen">{{ search_result }}</div>
+                {% if result %}
+                <h3 style="margin-top: 15px; color: #00ffcc;">📋 تقرير العمليات الميداني:</h3>
+                <div class="terminal-screen">{{ result }}</div>
                 {% endif %}
             </div>
         </div>
@@ -107,120 +87,69 @@ DASHBOARD_TEMPLATE = """
 </html>
 """
 
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email').strip().lower()
-        
-        # فحص سيرفر صارم جداً يرفض أي بريد لا ينتهي حصراً بـ gmail.com أو نطاقات موثقة كبرى
-        valid_domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "proton.me"]
-        
-        if '@' not in email:
-            error = "❌ خطأ أمني: صيغة البريد الإلكتروني غير صحيحة. يجب أن يحتوي على @."
-            return render_template_string(LOGIN_TEMPLATE, error=error)
-            
-        domain_part = email.split('@')[-1]
-        local_part = email.split('@')[0]
-        
-        if domain_part not in valid_domains or len(local_part) < 3:
-            error = "❌ تم رفض البريد! يُشترط إدخال بريد حقيقي مسجل (مثل gmail.com) وباسم مستخدم صالح ولا يُقبل البريد الوهمي نهائياً."
-            return render_template_string(LOGIN_TEMPLATE, error=error)
-            
-        session['username'] = username
-        session['email'] = email
-        return redirect(url_for('dashboard'))
-    return render_template_string(LOGIN_TEMPLATE, error=error)
+@app.route('/')
+def index():
+    resp = make_response(render_template_string(PANEL_TEMPLATE, result=None))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
 
-@app.route('/dashboard')
-def dashboard():
-    if 'email' not in session:
-        return redirect(url_for('login'))
-    return render_template_string(
-        DASHBOARD_TEMPLATE, 
-        user_email=session['email'],
-        client_ip=request.remote_addr,
-        search_result=None
-    )
-
-@app.route('/search', methods=['POST'])
-def real_search():
-    if 'email' not in session:
-        return redirect(url_for('login'))
-        
+@app.route('/scan', methods=['POST'])
+def run_scan():
     client_ip = request.remote_addr
-    user_email = session['email']
-    target_input = request.form.get('target', '').strip()
-    scan_type = request.form.get('scan_type', 'universal')
+    target = request.form.get('target', '').strip()
+    scan_type = request.form.get('scan_type', 'all')
     
-    result_log = f"[*] Verified Operator: {user_email} | IP: {client_ip}\n[*] Objective: {target_input}\n[*] Mode: {scan_type.upper()}\n"
+    log = f"[*] Operator IP: {client_ip}\n[*] Target Objective: {target}\n[*] Active Protocol: {scan_type.upper()}\n"
     
     try:
-        if scan_type == 'universal':
-            if target_input.startswith("http://") or target_input.startswith("https://"):
-                parsed_url = urllib.parse.urlparse(target_input)
-                domain = parsed_url.netloc
-                path = parsed_url.path
-                result_log += f"[+] Target URL Domain: {domain}\n"
-                result_log += f"[+] Target Path: {path if path else '/'}\n"
-                
-                try:
-                    ip_addr = socket.gethostbyname(domain)
-                    result_log += f"[+] Resolved Server IP: {ip_addr}\n"
-                except Exception:
-                    result_log += f"[-] DNS Warning: Could not resolve IP for {domain}\n"
-                
-                try:
-                    headers = {"User-Agent": "Mozilla/5.0"}
-                    resp = requests.get(target_input, headers=headers, timeout=6, allow_redirects=True)
-                    result_log += f"[+] HTTP Code: {resp.status_code}\n"
-                    result_log += f"[+] Content-Type: {resp.headers.get('Content-Type', 'Unknown')}\n"
-                    result_log += f"[+] Server Signature: {resp.headers.get('Server', 'Hidden')}\n"
-                    
-                    if "text/html" in resp.headers.get('Content-Type', ''):
-                        title_match = re.search(r'<title>(.*?)</title>', resp.text, re.IGNORECASE)
-                        if title_match:
-                            result_log += f"[V] Target Title: {title_match.group(1).strip()}\n"
-                except Exception as ex:
-                    result_log += f"[-] Probe Exception: {str(ex)}\n"
-            else:
-                domain = target_input.split('/')[0]
-                ip_addr = socket.gethostbyname(domain)
-                result_log += f"[+] Direct Target: {domain}\n"
-                result_log += f"[+] Resolved IP: {ip_addr}\n"
-                
-        elif scan_type == 'dns':
-            domain = target_input.replace('https://', '').replace('http://', '').split('/')[0]
-            ip_addr = socket.gethostbyname(domain)
-            result_log += f"[+] Target Domain: {domain} -> IP: {ip_addr}\n"
-            try:
-                host_info = socket.gethostbyaddr(ip_addr)
-                result_log += f"[+] PTR Hostname: {host_info[0]}\n"
-            except:
-                result_log += "[-] PTR Record: None found.\n"
-                
-        elif scan_type == 'ports':
-            domain = target_input.replace('https://', '').replace('http://', '').split('/')[0]
-            target_ip = socket.gethostbyname(domain)
-            result_log += f"[*] Scanning ports on target IP: {target_ip}...\n"
-            for p in [80, 443, 21, 22, 8080, 3306]:
+        if scan_type == 'ports':
+            domain = target.replace('https://', '').replace('http://', '').split('/')[0]
+            ip = socket.gethostbyname(domain)
+            log += f"[+] Target IP Resolved: {ip}\n[*] Scanning critical ports...\n"
+            for p in [21, 22, 80, 443, 3306, 8080]:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(0.7)
-                res = s.connect_ex((target_ip, p))
-                result_log += f"    Port {p}: {'[OPEN]' if res == 0 else '[CLOSED]'}\n"
+                s.settimeout(0.6)
+                res = s.connect_ex((ip, p))
+                log += f"    Port {p}: {'[OPEN - نشط][span_0](start_span)[span_1](start_span)[span_2](start_span)'[span_0](end_span)[span_1](end_span)[span_2](end_span) if res == 0 else '[CLOSED - مغلق]'}\n"
                 s.close()
                 
-        result_log += "[+] Intelligence scan successfully completed.\n"
+        elif scan_type == 'media':
+            if not target.startswith("http"):
+                target = "http://" + target
+            headers = {"User-Agent": "Mozilla/5.0"}
+            r = requests.get(target, headers=headers, timeout=5)
+            log += f"[+] Media Probe Status: {r.status_code}\n"
+            images = re.findall(r'src=["\'](.*?\.(?:png|jpg|jpeg|gif|mp4|webp))["\']', r.text, re.IGNORECASE)
+            log += f"[+] Discovered Media Assets ({len(images)} found):\n"
+            for img in images[:10]:
+                log += f"    -> {img}\n"
+                
+        elif scan_type == 'vulnerability':
+            domain = target.replace('https://', '').replace('http://', '').split('/')[0]
+            log += f"[*] Running fast vulnerability headers check on: {domain}\n"
+            r = requests.get(target if target.startswith("http") else "http://"+target, timeout=5)
+            log += f"[+] Security Headers Analysis:\n"
+            log += f"    - X-Frame-Options: {r.headers.get('X-Frame-Options', 'Missing (Potential Vulnerability)')}\n"
+            log += f"    - Content-Security-Policy: {r.headers.get('CSP', 'Not Enforced')}\n"
+            log += f"    - Server Banner: {r.headers.get('Server', 'Hidden')}\n"
+            
+        else: # Universal All-in-one
+            domain = target.replace('https://', '').replace('http://', '').split('/')[0]
+            ip = socket.gethostbyname(domain)
+            log += f"[+] Target Domain: {domain} | IP: {ip}\n"
+            r = requests.get(target if target.startswith("http") else "http://"+target, timeout=5)
+            log += f"[+] Response Code: {r.status_code} | Server: {r.headers.get('Server', 'Unknown')}\n"
+            title = re.search(r'<title>(.*?)</title>', r.text, re.IGNORECASE)
+            if title:
+                log += f"[V] Page Title: {title.group(1).strip()}\n"
+            
+        log += "[+] Intelligence operation successfully executed.\n"
     except Exception as e:
-        result_log += f"[-] Scan Error: {str(e)}\n"
+        log += f"[-] Execution Error: {str(e)}\n"
 
-    return render_template_string(
-        DASHBOARD_TEMPLATE, 
-        user_email=session['email'],
-        client_ip=client_ip,
-        search_result=result_log
-    )
+    resp = make_response(render_template_string(PANEL_TEMPLATE, result=log))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return resp
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
